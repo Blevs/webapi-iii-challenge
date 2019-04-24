@@ -3,6 +3,12 @@ const userDb = require('../data/helpers/userDb.js');
 
 const router = express.Router();
 
+function formatName(req, res, next) {
+  req.body && req.body.name && typeof req.body.name === "string"
+    && (req.body.name = req.body.name.toUpperCase());
+  next();
+};
+
 // get users
 router.get('/', (req, res) => {
   userDb.get()
@@ -11,7 +17,7 @@ router.get('/', (req, res) => {
 });
 
 // post user
-router.post('/', (req, res) => {
+router.post('/', formatName, (req, res) => {
   const user = req.body;
   if (user.name && user.name !== "") {
     userDb.insert(user)
@@ -34,7 +40,7 @@ router.get('/:id', (req, res) => {
 });
 
 // put user by id
-router.put('/:id', (req, res) => {
+router.put('/:id', formatName, (req, res) => {
   const id = req.params.id,
         newUser = req.body;
   if (newUser.name && newUser.name !== "") {
