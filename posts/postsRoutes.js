@@ -36,8 +36,15 @@ router.post('/', (req, res) => {
   }
 });
 
-
 // get post by id
+router.get('/:id', (req, res) => {
+  postDb.getById(req.params.id)
+    .then((post) => post
+          ? res.status(201).json(post)
+          : res.status(404).json({error: "The post with the specified ID does not exist."}))
+    .catch(err => res.status(500).json({error: "The post information could not be retrieved."}));
+});
+
 // put post by id
 // delete post by id
 
