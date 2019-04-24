@@ -12,6 +12,17 @@ router.get('/', (req, res) => {
 });
 
 // post user
+router.post('/', (req, res) => {
+  const user = req.body;
+  if (user.name && user.name !== "") {
+    userDb.insert(user)
+      .then(user => res.status(201).json(user))
+      .catch(err => res.status(500).json({error: "There was an error while saving the user."}))
+    ;
+  } else {
+    res.status(400).json({error: "Please provide name for user"});
+  }
+});
 
 // get user by id posts
 // post user by id post
