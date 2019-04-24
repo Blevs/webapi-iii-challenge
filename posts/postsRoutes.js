@@ -45,8 +45,20 @@ router.get('/:id', (req, res) => {
     .catch(err => res.status(500).json({error: "The post information could not be retrieved."}));
 });
 
-// put post by id
 // delete post by id
+router.delete('/:id', (req, res) => {
+  postDb.getById(req.params.id)
+    .then((post) => post
+          ? postDb.remove(req.params.id)
+          .then(deleted => deleted
+                ? res.status(200).json(post)
+                : (void 0).throwError())
+          .catch(err => res.status(500).json({error: "The post could not be removed."}))
+          : res.status(404).json({error: "The post with the specified ID does not exist."}))
+    .catch(err => res.status(500).json({error: "The post information could not be retrieved."}));
+});
+
+// put post by id
 
 
 module.exports = router;
