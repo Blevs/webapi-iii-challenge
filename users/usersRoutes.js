@@ -1,5 +1,4 @@
 const express = require('express');
-const postDb = require('../data/helpers/postDb.js');
 const userDb = require('../data/helpers/userDb.js');
 
 const router = express.Router();
@@ -34,6 +33,31 @@ router.get('/:id', (req, res) => {
     .catch(err => res.status(404).json({error: "There was an error retrieving the user information."}));
 });
 
+// put user by id
+router.put('/:id', (req, res) => {
+  const id = req.params.id,
+        newUser = req.body;
+  if (newUser.name && newUser.name !== "") {
+    userDb.getById(id)
+      .then(user => user
+            ? userDb.update(id, newUser)
+            .then(updated => updated
+                  ? userDb.getById(id)
+                  .then(user => user
+                        ? res.status(200).json(user)
+                        : (void 0).throwError())
+                  .catch(err => res.status(500).json({
+                    error: "The user was updated, but could not be retrieved."
+                  }))
+                  : (void 0).throwError())
+            .catch(err => res.status(500).json({error: "There was an error updating the user"}))
+            : res.status(404).json({error: "The user with the specified ID does not exist."}))
+      .catch(err => res.status(404).json({error: "There was an error retrieving the user information."}));
+  } else {
+    res.status(400).json({error: "Please provide name for the user."});
+  }
+});
+
 // get user by id posts
 router.get('/:id/posts', (req, res) => {
   const id = req.params.id;
@@ -47,8 +71,5 @@ router.get('/:id/posts', (req, res) => {
           : res.status(404).json({error: "The user with the specified ID does not exist."}))
     .catch(err => res.status(404).json({error: "There was an error retrieving the user information."}));
 });
-// post user by id post
-// delete user by id post by id
-// put user by id post by id
 
 module.exports = router;

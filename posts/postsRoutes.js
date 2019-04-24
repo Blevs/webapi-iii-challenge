@@ -5,6 +5,7 @@ const userDb = require('../data/helpers/userDb.js');
 const router = express.Router();
 
 router.get('/', (req, res) => {
+  console.log(req.body);
   postDb.get()
     .then(posts => res.status(200).json(posts))
     .catch(err => res.staus(500).json({error: "The posts information could not be retrieved."}));
@@ -13,6 +14,7 @@ router.get('/', (req, res) => {
 // post post
 router.post('/', (req, res) => {
   const post = req.body;
+  console.log(req);
   if (post.text && post.user_id) {
     userDb.getById(post.user_id)
       .then(user => user
@@ -78,7 +80,7 @@ router.put('/:id', (req, res) => {
             : res.status(404).json({error: "The post with the specified ID does not exist."}))
       .catch(err => res.status(500).json({error: "The post information could not be retrieved."}));
   } else {
-    res.status(500).json({error: "Please provide text for the post."});
+    res.status(400).json({error: "Please provide text for the post."});
   }
 });
 
